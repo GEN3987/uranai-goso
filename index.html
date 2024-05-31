@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ｺﾞｿ占い｜今日のラッキー＆デスアイテム</title>
+    <meta property="og:url" content="https://gen3987.github.io/uranai-goso/">
+    <meta property="og:title" content="ｺﾞｿ占い">
+    <meta property="og:description" content="今日のラッキー＆デスアイテム">
+    <meta property="og:site_name" content="ｺﾞｿ占い">
+    <meta property="og:type" content="うらない">
+    <meta property="og:image" content="https://gen3987.github.io/uranai-goso/icon.png">
+    <link rel="icon" type="image/png" href="https://gen3987.github.io/uranai-goso/icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* 背景を最背面に配置 */
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 50%の透明度の黒色 */
+        }
+
+        .square {
+            width: 25%;
+            height: 50vh;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="overlay"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+    </div>
+
+    <div class="container">
+        <h1>今日のラッキー＆デスアイテム</h1>
+        <button id="getItemsButton">アイテムを取得</button>
+        <button id="resetButton">key</button>
+        <div id="result">
+            <p id="luckyItem">ラッキーアイテム: <span id="lucky"></span></p>
+            <p id="deathItem">デスアイテム: <span id="death"></span></p>
+        </div>
+        <button id="shareButton" style="display: none;">Twitterで共有</button>
+    </div>
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Key?</h2>
+            <input type="password" id="passwordInput">
+            <button id="submitButton">送信</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const squares = document.querySelectorAll(".square");
+
+            // 初期の8枚の画像のURLリスト
+            const initialImageUrls = [
+                "./img/p_1.png",
+                "./img/p_2.png",
+                "./img/p_3.png",
+                "./img/p_4.png",
+                "./img/p_5.png",
+                "./img/p_6.png",
+                "./img/p_7.png",
+                "./img/p_8.png"
+            ];
+
+            // 100枚の他の画像のURLリスト
+            const otherImageUrls = [];
+            for (let i = 1; i <= 100; i++) {
+                otherImageUrls.push(`./img/p_${i}.png`);
+            }
+
+            // ページ読み込み時に初期表示を設定
+            function setInitialImages() {
+                squares.forEach((square, index) => {
+                    square.style.backgroundImage = `url(${initialImageUrls[index]})`;
+                });
+            }
+            setInitialImages();
+
+            // 5秒ごとにランダムな画像を入れ替える
+            setInterval(() => {
+                const randomSquareIndex = Math.floor(Math.random() * squares.length);
+                const randomImageIndex = Math.floor(Math.random() * otherImageUrls.length);
+                squares[randomSquareIndex].style.backgroundImage = `url(${otherImageUrls[randomImageIndex]})`;
+            }, 50);
+        });
+    </script>
+</body>
+</html>
