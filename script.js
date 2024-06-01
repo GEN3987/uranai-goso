@@ -10,26 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = document.querySelector('.close');
     const countdownSpan = document.getElementById('countdown');
 
-    function checkButtonState() {
-        const lastClickTime = localStorage.getItem('lastClickTime');
-        if (lastClickTime) {
-            const lastClickDate = new Date(lastClickTime);
-            const now = new Date();
-            const resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-
-            if (now < resetTime) {
-                resetTime.setDate(resetTime.getDate() - 1);
-            }
-
-            if (lastClickDate >= resetTime) {
-                getItemsButton.disabled = true;
-                getItemsButton.textContent = '一日に一回のみ押せます';
-                startCountdown(resetTime);
-            }
+    function calculateResetTime() {
+        const now = new Date();
+        const resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        if (now >= resetTime) {
+            resetTime.setDate(resetTime.getDate() + 1);
         }
+        return resetTime;
     }
 
-    function startCountdown(resetTime) {
+    function startCountdown() {
+        const resetTime = calculateResetTime();
         const interval = setInterval(() => {
             const now = new Date();
             const timeDifference = resetTime - now;
@@ -46,6 +37,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 countdownSpan.textContent = `次の更新まで: ${hours}時間${minutes}分${seconds}秒`;
             }
         }, 1000);
+    }
+
+    function checkButtonState() {
+        const lastClickTime = localStorage.getItem('lastClickTime');
+        if (lastClickTime) {
+            const lastClickDate = new Date(lastClickTime);
+            const now = new Date();
+            const resetTime = calculateResetTime();
+
+            if (lastClickDate >= resetTime) {
+                getItemsButton.disabled = true;
+                getItemsButton.textContent = '一日に一回のみ押せます';
+            }
+        }
+        startCountdown(); // 常にカウントダウンを開始
     }
 
     function setItems() {
@@ -67,12 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 getItemsButton.disabled = true;
                 getItemsButton.textContent = '一日に一回のみ押せます';
 
-                // 日本時間の午前5時を計算
-                const resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
-                if (now >= resetTime) {
-                    resetTime.setDate(resetTime.getDate() + 1);
-                }
-                startCountdown(resetTime);
+                startCountdown(); // カウントダウンを再開始
             })
             .catch(error => {
                 console.error('Error fetching items:', error);
@@ -89,13 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function submitPassword() {
         const password = passwordInput.value;
-        // パスワードの検証
+        // pass
         if (password === 'goso-goat') {
             localStorage.removeItem('lastClickTime');
             getItemsButton.disabled = false;
             getItemsButton.textContent = 'アイテムを取得';
             closeModal();
-            countdownSpan.textContent = ''; // カウントダウンをクリア
+            countdownSpan.textContent = ''; // cd
         } else {
             alert('パスワードが違います');
         }
