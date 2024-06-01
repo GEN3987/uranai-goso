@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (lastClickDate >= resetTime) {
                 getItemsButton.disabled = true;
                 getItemsButton.textContent = '一日に一回のみ押せます';
+            } else {
+                getItemsButton.disabled = false;
+                getItemsButton.textContent = 'アイテムを取得';
             }
         }
         startCountdown(); // 常にカウントダウンを開始
@@ -90,13 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function submitPassword() {
         const password = passwordInput.value;
-        // pass
+        // パスワードの検証
         if (password === 'goso-goat') {
             localStorage.removeItem('lastClickTime');
             getItemsButton.disabled = false;
             getItemsButton.textContent = 'アイテムを取得';
             closeModal();
-            countdownSpan.textContent = ''; // cd
+            countdownSpan.textContent = ''; // カウントダウンをクリア
         } else {
             alert('パスワードが違います');
         }
