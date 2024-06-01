@@ -8,19 +8,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('passwordInput');
     const submitButton = document.getElementById('submitButton');
     const closeModalButton = document.querySelector('.close');
+    const countdownSpan = document.getElementById('countdown');
 
     function checkButtonState() {
         const lastClickTime = localStorage.getItem('lastClickTime');
         if (lastClickTime) {
             const lastClickDate = new Date(lastClickTime);
             const now = new Date();
-            const oneDay = 24 * 60 * 60 * 1000;
+            const resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
 
-            if (now - lastClickDate < oneDay) {
+            if (now < resetTime) {
+                resetTime.setDate(resetTime.getDate() - 1);
+            }
+
+            if (lastClickDate >= resetTime) {
                 getItemsButton.disabled = true;
                 getItemsButton.textContent = '一日に一回のみ押せます';
+                startCountdown(resetTime);
             }
         }
+    }
+
+    function startCountdown(resetTime) {
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeDifference = resetTime - now;
+            if (timeDifference <= 0) {
+                clearInterval(interval);
+                countdownSpan.textContent = '';
+                getItemsButton.disabled = false;
+                getItemsButton.textContent = 'アイテムを取得';
+                localStorage.removeItem('lastClickTime');
+            } else {
+                const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                countdownSpan.textContent = `次の更新まで: ${hours}時間${minutes}分${seconds}秒`;
+            }
+        }, 1000);
     }
 
     function setItems() {
@@ -41,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('lastClickTime', now.toISOString());
                 getItemsButton.disabled = true;
                 getItemsButton.textContent = '一日に一回のみ押せます';
+
+                // 日本時間の午前5時を計算
+                const resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+                if (now >= resetTime) {
+                    resetTime.setDate(resetTime.getDate() + 1);
+                }
+                startCountdown(resetTime);
             })
             .catch(error => {
                 console.error('Error fetching items:', error);
@@ -63,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             getItemsButton.disabled = false;
             getItemsButton.textContent = 'アイテムを取得';
             closeModal();
+            countdownSpan.textContent = ''; // カウントダウンをクリア
         } else {
             alert('パスワードが違います');
         }
