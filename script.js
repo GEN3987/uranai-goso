@@ -10,9 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = document.querySelector('.close');
     const countdownSpan = document.getElementById('countdown');
 
+    const encryptedPassword = "Z29zby1nb2F0LmNvbQ=="; // pass
+
     function calculateResetTime() {
         const now = new Date();
-        const resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+        let resetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
         if (now >= resetTime) {
             resetTime.setDate(resetTime.getDate() + 1);
         }
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startCountdown() {
-        const resetTime = calculateResetTime();
+        const resetTime = new Date(localStorage.getItem('nextResetTime'));
         const interval = setInterval(() => {
             const now = new Date();
             const timeDifference = resetTime - now;
@@ -28,8 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(interval);
                 countdownSpan.textContent = '';
                 getItemsButton.disabled = false;
-                getItemsButton.textContent = 'アイテムを取得';
+                getItemsButton.textContent = 'うらなう';
                 localStorage.removeItem('lastClickTime');
+                localStorage.removeItem('nextResetTime');
+                localStorage.removeItem('luckyItem');
+                localStorage.removeItem('deathItem');
+                luckySpan.textContent = '';
+                deathSpan.textContent = '';
+                shareButton.style.display = 'none';
             } else {
                 const hours = Math.floor(timeDifference / (1000 * 60 * 60));
                 const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -42,19 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkButtonState() {
         const lastClickTime = localStorage.getItem('lastClickTime');
         if (lastClickTime) {
-            const lastClickDate = new Date(lastClickTime);
-            const now = new Date();
             const resetTime = calculateResetTime();
-
-            if (lastClickDate >= resetTime) {
+            const now = new Date();
+            if (now < resetTime) {
                 getItemsButton.disabled = true;
-                getItemsButton.textContent = '一日に一回のみ押せます';
-            } else {
-                getItemsButton.disabled = false;
-                getItemsButton.textContent = 'アイテムを取得';
+                getItemsButton.textContent = 'またあした！';
+                localStorage.setItem('nextResetTime', resetTime.toISOString());
+                // 保存されたアイテムを表示
+                luckySpan.textContent = localStorage.getItem('luckyItem');
+                deathSpan.textContent = localStorage.getItem('deathItem');
+                shareButton.style.display = 'block';
             }
         }
-        startCountdown(); // 常にカウントダウンを開始
+        startCountdown(); // cd-s
     }
 
     function setItems() {
@@ -72,11 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 shareButton.style.display = 'block';
 
                 const now = new Date();
+                const resetTime = calculateResetTime();
                 localStorage.setItem('lastClickTime', now.toISOString());
+                localStorage.setItem('nextResetTime', resetTime.toISOString());
+                localStorage.setItem('luckyItem', luckyItem);
+                localStorage.setItem('deathItem', deathItem);
                 getItemsButton.disabled = true;
-                getItemsButton.textContent = '一日に一回のみ押せます';
+                getItemsButton.textContent = 'またあした！';
 
-                startCountdown(); // カウントダウンを再開始
+                startCountdown(); // cd
             })
             .catch(error => {
                 console.error('Error fetching items:', error);
@@ -91,17 +103,24 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordModal.style.display = 'none';
     }
 
+    function encodeBase64(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+
     function submitPassword() {
         const password = passwordInput.value;
-        // パスワードの検証
-        if (password === 'goso-goat') {
+        // pass-c
+        if (encodeBase64(password) === encryptedPassword) {
             localStorage.removeItem('lastClickTime');
+            localStorage.removeItem('nextResetTime');
+            localStorage.removeItem('luckyItem');
+            localStorage.removeItem('deathItem');
             getItemsButton.disabled = false;
-            getItemsButton.textContent = 'アイテムを取得';
+            getItemsButton.textContent = 'うらなう';
             closeModal();
-            countdownSpan.textContent = ''; // カウントダウンをクリア
+            countdownSpan.textContent = ''; // cd-clear
         } else {
-            alert('パスワードが違います');
+            alert("( 'ω')🖕");
         }
     }
 

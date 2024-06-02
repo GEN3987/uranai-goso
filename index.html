@@ -26,7 +26,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* 背景を最背面に配置 */
+            z-index: -1; 
             display: flex;
             flex-wrap: wrap;
         }
@@ -37,7 +37,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* 50%の透明度の黒色 */
+            background-color: rgba(0, 0, 0, 0.5); 
         }
 
         .square {
@@ -69,7 +69,7 @@
             <p id="luckyItem">ラッキーアイテム: <span id="lucky"></span></p>
             <p id="deathItem">デスアイテム: <span id="death"></span></p>
         </div>
-        <div id="countdown"></div> <!-- カウントダウン -->
+        <div id="countdown"></div> <!-- cd -->
         <button id="shareButton" style="display: none;">Twitterで共有</button>
     </div>
     <div id="passwordModal" class="modal">
@@ -85,7 +85,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             const squares = document.querySelectorAll(".square");
 
-            // 初期の8枚の画像のURLリスト
+            // list
             const initialImageUrls = [
                 "./img/p_1.png",
                 "./img/p_2.png",
@@ -97,13 +97,13 @@
                 "./img/p_8.png"
             ];
 
-            // 100枚の他の画像のURLリスト
+            // haikei
             const otherImageUrls = [];
             for (let i = 1; i <= 100; i++) {
                 otherImageUrls.push(`./img/p_${i}.png`);
             }
 
-            // ページ読み込み時に初期表示を設定
+            // con
             function setInitialImages() {
                 squares.forEach((square, index) => {
                     square.style.backgroundImage = `url(${initialImageUrls[index]})`;
@@ -111,7 +111,7 @@
             }
             setInitialImages();
 
-            // 5秒ごとにランダムな画像を入れ替える
+            // rand
             setInterval(() => {
                 const randomSquareIndex = Math.floor(Math.random() * squares.length);
                 const randomImageIndex = Math.floor(Math.random() * otherImageUrls.length);
